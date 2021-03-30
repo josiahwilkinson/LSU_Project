@@ -1,0 +1,24 @@
+The LSU_Project_v1 is a program written in Processing. Therefore, it requires the Processing Editor to be compiled and run
+https://processing.org/download/
+If it does not work, your computer's java may need to be updated.
+
+
+The current program supports an overworld JRPG style map as well as visual novel style cutscenes, run in a state stack (because game state systems are not good enough)
+
+The map has functionality for bounds, triggers, objects, and NPCs
+It has partial and will soon have full shadow functionality for the night portions of the game
+It is in need of AI for running enemies during the night protion.
+
+The cunscenes for functionality for character image tracking, choices, partial map manipulation, boolean trackering, and boolean conditions
+It has partial functionality for character image/name tracking which will allow sprites to be shown on the sides and manipulated
+
+
+List of things to do:
+-finish CutsceneCharacter implementation
+-create loadMap() function
+-integrate flashlight functionality
+-create enemy AI
+-add more items to this list
+
+
+Scripting intructions for those writing cutscenes to come after completion of cutscenes
