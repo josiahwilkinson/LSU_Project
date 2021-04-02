@@ -25,7 +25,6 @@ class Cutscene extends State {
   String lineB = "";
   String lineC = "";
   String speakerName;
-  PImage speakerFace;
   boolean lineFinishedA = false;
   boolean lineFinishedB = false;
   boolean lineFinishedC = false;
@@ -96,7 +95,6 @@ class Cutscene extends State {
           //  if none
           if (lines[cutsceneLine].equals("null")) {
             speakerName = "";
-            speakerFace = null;
           }
           //  otherwise, check for each
           else {
@@ -105,12 +103,6 @@ class Cutscene extends State {
               speakerName = "";
             else
               speakerName = parts[0];
-              /*
-            if (parts[1].equals(null) || parts[1].equals("null"))
-              speakerFace = null;
-            else
-              speakerFace = loadImage(parts[1]);
-              */
           }
           cutsceneLine = skipSpaces(++cutsceneLine, lines);
           //  reset textbox
@@ -496,6 +488,13 @@ class Cutscene extends State {
           cutsceneLine = skipSpaces(++cutsceneLine, lines);
           moveOn = true;
         }
+        //  wait until fade is finished before continuing
+        else if (lines[cutsceneLine].equals("fade wait")) {
+          if (alpha == 0 || alpha == 255 || rate == 0) {
+            cutsceneLine = skipSpaces(++cutsceneLine, lines);
+            moveOn = true;
+          }
+        }
         //  game over
         else if (lines[cutsceneLine].equals("game over")) {
           stateStack.addState(new End());
@@ -728,6 +727,12 @@ class Cutscene extends State {
   //  update function
   void drawState() {
 
+
+    //  draw characters
+    for (CutsceneCharacter c : cutsceneCharacters)
+      c.drawCharacter();
+
+
     //  back screen
     if (alpha != 0) {
       fill(0, alpha);
@@ -745,16 +750,16 @@ class Cutscene extends State {
         rect(25, heightValue - 95 - 10 - 30, textWidth(speakerName) + 10, 95, 15);
         fill(255);
         text(speakerName, 30, heightValue - 110);
+
+        //  unshade character with matching name
+        for (CutsceneCharacter c : cutsceneCharacters)
+          if (speakerName.equals(c.getDisplayName()) || speakerName.equals(c.getRealName()))
+            c.unshade();
       }
-      //  check for face
-      if (speakerFace != null)
-        image(speakerFace, 15, heightValue - 95 - 10, 85, 85);
       //  show content
       fill(255);
       setTextSize(25);
-      int x = 100;
-      if (speakerFace == null)
-        x = 20;
+      int x = 20;
       text(lineA, x, heightValue - 80);
       text(lineB, x, heightValue - 50);
       text(lineC, x, heightValue - 20);
@@ -793,8 +798,8 @@ class Cutscene extends State {
     int line = 0;
     while (line < lines.length) {
       if (lines[line].equals("label")) {
-        //  line = skipSpaces(++cutsceneLine, lines);
-        line++;
+        line = skipSpaces(++cutsceneLine, lines);
+        //  line++;
         if (lines[line].equals(label)) {
           return line;
         }
@@ -884,7 +889,7 @@ class Cutscene extends State {
       setDisplayName(name);
       pos = p;
       side = s;
-      setImage(imageName);
+      setImage("cutscene_characters_" + imageName + ".png");
     }
 
     void setDisplayName(String d) {
@@ -912,13 +917,15 @@ class Cutscene extends State {
     }
 
     void setImage(String imageName) {
-      image = loadImage("characters/" + imageName);
+      image = loadImage("CutsceneCharacters/" + imageName);
       size = new PVector(image.width, image.height);
+      pos.y = heightValue-image.height;
     }
 
     void setImage(String imageName, PVector s) {
-      image = loadImage("characters/" + imageName);
+      image = loadImage("CutsceneCharacters/" + imageName);
       size = s;
+      pos.y = heightValue-image.height;
     }
 
     void setPosition(PVector p) {

@@ -12,8 +12,8 @@ boolean fullScreen = false;          //  fullscreen tracker
 boolean fullPress = false;           //  tracker boolean
 PVector indent = new PVector(0, 0);  //  screen indent
 float screenSize = 0;                //  screen size multiplier
-int widthValue = 528;
-int heightValue = 528;
+int widthValue = 600;
+int heightValue = 600;
 
 
 //  mouse
@@ -61,6 +61,9 @@ void setup() {
   size(600, 600);
 
   frameRate(60);
+
+  widthValue = width;
+  heightValue = height;
 
 
   //  set up booliales

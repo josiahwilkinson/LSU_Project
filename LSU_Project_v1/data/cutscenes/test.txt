@@ -4,6 +4,32 @@ Ominous voice
 testing
 end
 
+add character
+Di, Di_mischievous
+
+
+text
+Di
+Hi there, ;;p;;
+Do you wanna... ;;n;;You know... ;;n;;...stare into each other's teeth!?
+end
 
 
 <END>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
