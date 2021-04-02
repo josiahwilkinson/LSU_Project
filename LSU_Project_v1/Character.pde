@@ -171,7 +171,8 @@ class MapCharacter extends Object {
     idle = new PImage[4][];
     walk = new PImage[4][];
     //  get sheet
-    PImage psheet = loadImage(s);
+    PImage psheet = new PImage();//   = loadImage(s);
+    psheet = loadImage(s);
     for (int d = 0; d < 4; d++) {
       idle[d] = new PImage[sLength];
       walk[d] = new PImage[sLength];
@@ -342,6 +343,25 @@ class Player extends MapCharacter {
   Player() {
     //  MapCharacter(String n, int x, int y, int ox, int oy, String s, int l, int h, int sl, int sw, int sh) {
     super(playerName, 0, 0, 0, 0, "", 50, 100, 4, 50, 100);
+  }
+}
+
+
+
+class NPC extends MapCharacter {
+
+  //  distance player must be to be able to interact
+  int minDist = 75;
+  //  cutscene played when they are interacted with
+  //  default of "" will cause no cutscene to be triggered (".txt" will automatically be added)
+  String cutscene = "";
+
+  NPC(String n, int x, int y, int ox, int oy, String s, int l, int h, int sl, int sw, int sh, int dir) {
+    super(n, x, y, ox, oy, s, l, h, sl, sw, sh, dir);
+  }
+  NPC(String n, int x, int y, int ox, int oy, String s, int l, int h, int sl, int sw, int sh, int dir, String cut) {
+    super(n, x, y, ox, oy, s, l, h, sl, sw, sh, dir);
+    cutscene = cut;
   }
 }
 

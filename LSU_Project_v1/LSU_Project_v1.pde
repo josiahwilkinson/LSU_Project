@@ -51,7 +51,7 @@ StateStack stateStack = new StateStack();
 
 
 String playerName = "player";
-MapCharacter player = new Player();
+MapCharacter player;
 
 
 
@@ -81,9 +81,13 @@ void setup() {
     input[i] = false;
 
 
+  //  player = new Player();
 
 
-  stateStack.addState(new MainMenu());
+  //  stateStack.addState(new MainMenu());
+
+
+  stateStack.addState(new Cutscene("test"));
 }
 
 

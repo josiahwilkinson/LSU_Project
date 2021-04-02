@@ -14,6 +14,10 @@ class Cutscene extends State {
   boolean moveOn = true;
 
 
+  //  cutscene characters
+  ArrayList<CutsceneCharacter> cutsceneCharacters = new ArrayList<CutsceneCharacter>();
+
+
   //  text variable
   boolean showTextbox = false;
   ArrayList<TextLines> textLines;
@@ -57,6 +61,10 @@ class Cutscene extends State {
     println("starting cutscene: " + fileNumber);
     lines = loadStrings("cutscenes/cutscene_" + fileNumber + ".txt");
   }
+  Cutscene(String fileName) {
+    println("starting cutscene: " + fileName);
+    lines = loadStrings("cutscenes/" + fileName + ".txt");
+  }
 
   Cutscene(String[] l) {
     lines = l;
@@ -97,10 +105,12 @@ class Cutscene extends State {
               speakerName = "";
             else
               speakerName = parts[0];
+              /*
             if (parts[1].equals(null) || parts[1].equals("null"))
               speakerFace = null;
             else
               speakerFace = loadImage(parts[1]);
+              */
           }
           cutsceneLine = skipSpaces(++cutsceneLine, lines);
           //  reset textbox
@@ -330,6 +340,148 @@ class Cutscene extends State {
          moveOn = true;
          }
          */
+        //  add character
+        else if (lines[cutsceneLine].equals("add character")) {
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          String[] parts = lines[cutsceneLine].split(", ");
+
+          //  name, side, imageName
+
+          //  character images are 400x500
+
+          //  on left side
+          if (parts.length == 2 || (parts.length == 3 && boolean(parts[1]))) {
+            //  check first free spot
+            int tracker = 0;
+            boolean taken = true;
+            while (taken) {
+              taken = false;  //  reset taken
+              for (CutsceneCharacter c : cutsceneCharacters)
+                if (c.pos.x == tracker) {
+                  taken = true;
+                  tracker += 100;
+                  break;
+                }
+            }
+            //  check length of input and create character
+            if (parts.length == 2)
+              cutsceneCharacters.add(new CutsceneCharacter(parts[0], new PVector(tracker, heightValue-500), true, parts[1]));
+            else
+              cutsceneCharacters.add(new CutsceneCharacter(parts[0], new PVector(tracker, heightValue-500), true, parts[2]));
+          }
+          //  on right side
+          else {
+            //  check first free spot
+            int tracker = widthValue-400;
+            boolean taken = false;
+            while (taken) {
+              taken = false;  //  reset taken
+              for (CutsceneCharacter c : cutsceneCharacters)
+                if (c.pos.x == tracker) {
+                  taken = true;
+                  tracker -= 100;
+                  break;
+                }
+            }
+            cutsceneCharacters.add(new CutsceneCharacter(parts[0], new PVector(tracker, heightValue-500), boolean(parts[1]), parts[2]));
+          }
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          moveOn = true;
+        }
+
+        //  remove character
+        else if (lines[cutsceneLine].equals("remove character")) {
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          for (CutsceneCharacter c : cutsceneCharacters)
+            if (c.name.equals(lines[cutsceneLine])) {
+              cutsceneCharacters.remove(c);
+              break;
+            }
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          moveOn = true;
+        }
+
+        //  change character display name
+        else if (lines[cutsceneLine].equals("change character display name")) {
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          String[] parts = lines[cutsceneLine].split(", ");
+          for (CutsceneCharacter c : cutsceneCharacters)
+            if (c.name.equals(parts[0])) {
+              c.setDisplayName(parts[1]);
+              break;
+            }
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          moveOn = true;
+        }
+
+        //  change character image
+        else if (lines[cutsceneLine].equals("change character image")) {
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          String[] parts = lines[cutsceneLine].split(", ");
+          for (CutsceneCharacter c : cutsceneCharacters)
+            if (c.name.equals(parts[0])) {
+              c.setImage(parts[1]);
+              break;
+            }
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          moveOn = true;
+        }
+
+        //  flip character
+        else if (lines[cutsceneLine].equals("flip character")) {
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          String[] parts = lines[cutsceneLine].split(", ");
+          for (CutsceneCharacter c : cutsceneCharacters)
+            if (c.name.equals(parts[0])) {
+              if (parts.length == 1)
+                c.flip();
+              else
+                c.setFlip(boolean(parts[1]));
+              break;
+            }
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          moveOn = true;
+        }
+
+        //  change character side
+        else if (lines[cutsceneLine].equals("change character side")) {
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          String[] parts = lines[cutsceneLine].split(", ");
+          for (CutsceneCharacter c : cutsceneCharacters)
+            if (c.name.equals(parts[0])) {
+              //  relabel side
+              if (parts.length == 1)
+                c.setSide(!c.side);
+              else
+                c.setSide(boolean(parts[1]));
+
+              //  reset x position
+              int tracker = 0;
+              if (!c.side)
+                tracker = widthValue-400;
+
+              //  check first free spot
+              boolean taken = false;
+              while (taken) {
+                taken = false;  //  reset taken
+                for (CutsceneCharacter c2 : cutsceneCharacters)
+                  if (c2.pos.x == tracker) {
+                    taken = true;
+                    tracker += 100*(int(c.side)*2-1);
+                    break;
+                  }
+              }
+              c.setPosition(new PVector(tracker, heightValue-500));
+
+              break;
+            }
+          cutsceneLine = skipSpaces(++cutsceneLine, lines);
+          moveOn = true;
+        }
+
+
+
+
         //  fades to black
         else if (lines[cutsceneLine].equals("fade out")) {
           cutsceneLine = skipSpaces(++cutsceneLine, lines);
